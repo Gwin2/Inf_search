@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Сдача лабораторных работ</title>
+	<style>
+		:root {
+			--bg: #f6f7fb;
+			--surface: #ffffff;
+			--surface-soft: #eef3f7;
+			--ink: #18202b;
+			--muted: #5d6b7a;
+			--line: #d7e0e8;
+			--accent: #0f766e;
+			--accent-dark: #0b5f59;
+			--gold: #b77712;
+			--shadow: 0 18px 45px rgba(24, 32, 43, 0.11);
+			--radius: 8px;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			background: var(--bg);
+			color: var(--ink);
+			font-family: Inter, "Segoe UI", Arial, sans-serif;
+			font-size: 15px;
+			line-height: 1.5;
+		}
+
+		a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.shell {
+			min-height: 100vh;
+			display: grid;
+			grid-template-columns: 288px minmax(0, 1fr);
+		}
+
+		.sidebar {
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			padding: 28px 22px;
+			background: #17212d;
+			color: #f4f7fb;
+			overflow: auto;
+		}
+
+		.brand {
+			margin-bottom: 30px;
+		}
+
+		.brand-mark {
+			width: 42px;
+			height: 42px;
+			display: grid;
+			place-items: center;
+			margin-bottom: 14px;
+			border-radius: 8px;
+			background: #f5c55c;
+			color: #17212d;
+			font-weight: 800;
+			font-size: 18px;
+		}
+
+		.brand h1 {
+			margin: 0;
+			font-size: 22px;
+			line-height: 1.16;
+			font-weight: 780;
+		}
+
+		.brand p {
+			margin: 9px 0 0;
+			color: #b9c7d5;
+			font-size: 13px;
+			line-height: 1.45;
+		}
+
+		.nav-title {
+			margin: 0 0 10px;
+			color: #89a1b8;
+			font-size: 12px;
+			font-weight: 760;
+			text-transform: uppercase;
+		}
+
+		.nav-list {
+			display: grid;
+			gap: 8px;
+			margin-bottom: 28px;
+		}
+
+		.nav-link {
+			display: grid;
+			grid-template-columns: 36px 1fr;
+			gap: 10px;
+			align-items: center;
+			padding: 10px;
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.04);
+			color: #eaf0f6;
+		}
+
+		.nav-link:hover,
+		.nav-link.is-active {
+			background: rgba(245, 197, 92, 0.13);
+			border-color: rgba(245, 197, 92, 0.34);
+		}
+
+		.nav-num {
+			width: 36px;
+			height: 36px;
+			display: grid;
+			place-items: center;
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.08);
+			font-weight: 800;
+		}
+
+		.nav-link span:last-child {
+			font-size: 13px;
+			color: #cdd9e5;
+		}
+
+		.launch {
+			padding: 14px;
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+		}
+
+		.launch strong {
+			display: block;
+			margin-bottom: 8px;
+			font-size: 13px;
+		}
+
+		.launch code {
+			display: block;
+			padding: 9px 10px;
+			border-radius: 6px;
+			background: #0f1721;
+			color: #f5c55c;
+			font-size: 13px;
+			white-space: nowrap;
+			overflow: auto;
+		}
+
+		.content {
+			min-width: 0;
+			padding: 30px;
+		}
+
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			gap: 18px;
+			align-items: center;
+			margin-bottom: 24px;
+		}
+
+		.topbar h2 {
+			margin: 0;
+			font-size: 30px;
+			line-height: 1.18;
+			letter-spacing: 0;
+		}
+
+		.topbar p {
+			margin: 6px 0 0;
+			color: var(--muted);
+			max-width: 760px;
+		}
+
+		.status-row {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+			justify-content: flex-end;
+		}
+
+		.status {
+			padding: 8px 10px;
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			background: var(--surface);
+			color: var(--muted);
+			font-size: 13px;
+			font-weight: 700;
+		}
+
+		.preview-panel {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 420px;
+			gap: 22px;
+			align-items: stretch;
+			margin-bottom: 24px;
+		}
+
+		.viewer {
+			min-height: 520px;
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			background: var(--surface);
+			box-shadow: var(--shadow);
+			overflow: hidden;
+		}
+
+		.viewer-head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			padding: 12px 14px;
+			border-bottom: 1px solid var(--line);
+			background: #fbfcfe;
+		}
+
+		.viewer-title {
+			min-width: 0;
+			font-weight: 780;
+		}
+
+		.viewer-path {
+			display: block;
+			color: var(--muted);
+			font-size: 12px;
+			font-weight: 600;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.open-btn {
+			flex: 0 0 auto;
+			padding: 8px 11px;
+			border: 0;
+			border-radius: 6px;
+			background: var(--accent);
+			color: white;
+			font-size: 13px;
+			font-weight: 780;
+			cursor: pointer;
+		}
+
+		.open-btn:hover {
+			background: var(--accent-dark);
+		}
+
+		iframe {
+			width: 100%;
+			height: 472px;
+			display: block;
+			border: 0;
+			background: white;
+		}
+
+		.summary {
+			display: grid;
+			gap: 14px;
+		}
+
+		.summary-card {
+			padding: 18px;
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			background: var(--surface);
+		}
+
+		.summary-card h3 {
+			margin: 0 0 8px;
+			font-size: 18px;
+		}
+
+		.summary-card p {
+			margin: 0;
+			color: var(--muted);
+		}
+
+		.metric-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 10px;
+			margin-top: 14px;
+		}
+
+		.metric {
+			padding: 12px;
+			border-radius: 8px;
+			background: var(--surface-soft);
+		}
+
+		.metric b {
+			display: block;
+			font-size: 24px;
+			line-height: 1;
+		}
+
+		.metric span {
+			color: var(--muted);
+			font-size: 12px;
+			font-weight: 700;
+		}
+
+		.labs {
+			display: grid;
+			gap: 18px;
+		}
+
+		.lab-section {
+			border: 1px solid var(--line);
+			border-radius: var(--radius);
+			background: var(--surface);
+			overflow: hidden;
+		}
+
+		.lab-head {
+			display: flex;
+			justify-content: space-between;
+			gap: 18px;
+			align-items: flex-start;
+			padding: 20px;
+			border-bottom: 1px solid var(--line);
+			background: #fbfcfe;
+		}
+
+		.lab-head h3 {
+			margin: 0;
+			font-size: 21px;
+			line-height: 1.2;
+		}
+
+		.lab-head p {
+			margin: 6px 0 0;
+			color: var(--muted);
+		}
+
+		.lab-tag {
+			padding: 7px 9px;
+			border-radius: 6px;
+			background: #e8f4f2;
+			color: var(--accent-dark);
+			font-size: 12px;
+			font-weight: 800;
+			white-space: nowrap;
+		}
+
+		.file-grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 1px;
+			background: var(--line);
+		}
+
+		.file-link {
+			min-height: 88px;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			gap: 10px;
+			padding: 15px;
+			background: var(--surface);
+			cursor: pointer;
+		}
+
+		.file-link:hover,
+		.file-link.is-selected {
+			background: #f0f8f7;
+		}
+
+		.file-link b {
+			font-size: 15px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.file-link span {
+			color: var(--muted);
+			font-size: 12px;
+			font-weight: 650;
+		}
+
+		.note {
+			margin-top: 24px;
+			padding: 15px 17px;
+			border: 1px solid #ecd4aa;
+			border-radius: var(--radius);
+			background: #fff8eb;
+			color: #6f4a12;
+			font-size: 14px;
+		}
+
+		@media (max-width: 1180px) {
+			.preview-panel {
+				grid-template-columns: 1fr;
+			}
+
+			.summary {
+				grid-template-columns: repeat(3, 1fr);
+			}
+		}
+
+		@media (max-width: 860px) {
+			.shell {
+				grid-template-columns: 1fr;
+			}
+
+			.sidebar {
+				position: static;
+				height: auto;
+			}
+
+			.content {
+				padding: 20px;
+			}
+
+			.topbar,
+			.lab-head {
+				display: block;
+			}
+
+			.status-row {
+				justify-content: flex-start;
+				margin-top: 14px;
+			}
+
+			.summary {
+				grid-template-columns: 1fr;
+			}
+
+			.file-grid {
+				grid-template-columns: 1fr;
+			}
+
+			iframe {
+				height: 430px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="shell">
+		<aside class="sidebar">
+			<div class="brand">
+				<div class="brand-mark">ЛР</div>
+				<h1>Панель сдачи лабораторных</h1>
+				<p>Единый WebUI для проверки работ по SQL, PHP, формам и MySQL.</p>
+			</div>
+
+			<p class="nav-title">Разделы</p>
+			<nav class="nav-list" aria-label="Лабораторные работы">
+				<a class="nav-link is-active" href="#lab1"><span class="nav-num">1</span><span>MySQL запросы</span></a>
+				<a class="nav-link" href="#lab2"><span class="nav-num">2</span><span>Основы PHP</span></a>
+				<a class="nav-link" href="#lab3"><span class="nav-num">3</span><span>Обработка форм</span></a>
+				<a class="nav-link" href="#lab4"><span class="nav-num">4</span><span>MySQL Web</span></a>
+			</nav>
+
+			<div class="launch">
+				<strong>Запуск одной командой</strong>
+				<code>.\start-ui.bat</code>
+			</div>
+		</aside>
+
+		<main class="content">
+			<header class="topbar">
+				<div>
+					<h2>Готовый комплект для преподавателя</h2>
+					<p>Открывайте любой файл в предпросмотре, запускайте формы и демонстрируйте обработчики без ручного поиска по папке.</p>
+				</div>
+				<div class="status-row">
+					<div class="status">4 лабораторные</div>
+					<div class="status">35+ файлов</div>
+					<div class="status">Локальный запуск</div>
+				</div>
+			</header>
+
+			<section class="preview-panel" aria-label="Предпросмотр">
+				<div class="viewer">
+					<div class="viewer-head">
+						<div class="viewer-title">
+							<span id="viewerTitle">Лабораторная 1: ответы SQL</span>
+							<span id="viewerPath" class="viewer-path">z1-1.txt</span>
+						</div>
+						<button id="openCurrent" class="open-btn" type="button">Открыть отдельно</button>
+					</div>
+					<iframe id="preview" title="Предпросмотр лабораторной" src="z1-1.txt"></iframe>
+				</div>
+
+				<div class="summary">
+					<div class="summary-card">
+						<h3>Состав работ</h3>
+						<p>SQL-ответы, PHP-скрипты, формы, обработчики, подключение к MySQL и операции с таблицей notebook.</p>
+						<div class="metric-grid">
+							<div class="metric"><b>1</b><span>TXT</span></div>
+							<div class="metric"><b>23</b><span>PHP</span></div>
+							<div class="metric"><b>4</b><span>HTML</span></div>
+						</div>
+					</div>
+					<div class="summary-card">
+						<h3>Базы данных</h3>
+						<p><code>study</code>: sal, cust, ord. <code>sample</code>: notebook. Подключение: localhost, root, пустой пароль.</p>
+					</div>
+					<div class="summary-card">
+						<h3>Демонстрация</h3>
+						<p>Клик по файлу открывает его внутри панели. Кнопка рядом с предпросмотром выводит работу в отдельной вкладке.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="labs">
+				<article id="lab1" class="lab-section">
+					<div class="lab-head">
+						<div>
+							<h3>Лабораторная N 1</h3>
+							<p>Язык MySQL. Готовый файл с ответами на 23 запроса.</p>
+						</div>
+						<span class="lab-tag">SQL</span>
+					</div>
+					<div class="file-grid">
+						<a class="file-link is-selected" href="z1-1.txt" data-title="Лабораторная 1: ответы SQL"><b>z1-1.txt</b><span>Ответы на вопросы</span></a>
+					</div>
+				</article>
+
+				<article id="lab2" class="lab-section">
+					<div class="lab-head">
+						<div>
+							<h3>Лабораторная N 2</h3>
+							<p>Основные конструкции PHP: переменные, условия, циклы, функции, массивы.</p>
+						</div>
+						<span class="lab-tag">PHP</span>
+					</div>
+					<div class="file-grid">
+						<a class="file-link" href="z2-1.php" data-title="ЛР2 N1: цвет и размер текста"><b>z2-1.php</b><span>$color и $size</span></a>
+						<a class="file-link" href="z2-5.php?lang=ru" data-title="ЛР2 N2: выбор языка"><b>z2-5.php</b><span>if / elseif</span></a>
+						<a class="file-link" href="z3-1.php" data-title="ЛР2 N3: таблица Пифагора"><b>z3-1.php</b><span>while 10x10</span></a>
+						<a class="file-link" href="z3-2.php" data-title="ЛР2 N4: таблица сложения"><b>z3-2.php</b><span>for 10x10</span></a>
+						<a class="file-link" href="z3-3.php?lang=Ru&color=green" data-title="ЛР2 N5: функция-переменная"><b>z3-3.php</b><span>Ru / En / Fr / De</span></a>
+						<a class="file-link" href="z3-5.php" data-title="ЛР2 N6: массивы чисел"><b>z3-5.php</b><span>array_merge, sort</span></a>
+						<a class="file-link" href="z3-6.php" data-title="ЛР2 N7: ассоциативный массив"><b>z3-6.php</b><span>asort, ksort, sort</span></a>
+					</div>
+				</article>
+
+				<article id="lab3" class="lab-section">
+					<div class="lab-head">
+						<div>
+							<h3>Лабораторная N 3</h3>
+							<p>Обработка форм: GET-параметры, тест, редирект, вспомогательные листинги.</p>
+						</div>
+						<span class="lab-tag">Forms</span>
+					</div>
+					<div class="file-grid">
+						<a class="file-link" href="z4-1a.htm" data-title="ЛР3 N1: форма align / valign"><b>z4-1a.htm</b><span>Форма выбора</span></a>
+						<a class="file-link" href="z4-1b.php?align=center&valign%5B%5D=middle" data-title="ЛР3 N1: результат формы"><b>z4-1b.php</b><span>Таблица 100x100</span></a>
+						<a class="file-link" href="z4-2.php" data-title="ЛР3 N2: самовызывающаяся форма"><b>z4-2.php</b><span>Форма вызывает себя</span></a>
+						<a class="file-link" href="z4-3a.htm" data-title="ЛР3 N3: города и памятники"><b>z4-3a.htm</b><span>Тест</span></a>
+						<a class="file-link" href="z4-3b.php?user=Student&answer%5B%5D=6&answer%5B%5D=9&answer%5B%5D=4&answer%5B%5D=1&answer%5B%5D=3&answer%5B%5D=2&answer%5B%5D=5&answer%5B%5D=8&answer%5B%5D=7" data-title="ЛР3 N3: результат теста"><b>z4-3b.php</b><span>Проверка switch</span></a>
+						<a class="file-link" href="z4-45.php" data-title="ЛР3 N4: листинг 10-5"><b>z4-45.php</b><span>Форма 10-5</span></a>
+						<a class="file-link" href="z4-46.php" data-title="ЛР3 N4: листинг 10-6"><b>z4-46.php</b><span>Форма 10-6</span></a>
+						<a class="file-link" href="z4-47.php" data-title="ЛР3 N4: листинг 10-7"><b>z4-47.php</b><span>Форма 10-7</span></a>
+						<a class="file-link" href="z4-5.php" data-title="ЛР3 N5: выбор поисковика"><b>z4-5.php</b><span>Redirect</span></a>
+					</div>
+				</article>
+
+				<article id="lab4" class="lab-section">
+					<div class="lab-head">
+						<div>
+							<h3>Лабораторная N 4</h3>
+							<p>Создание поисковых систем и работа с MySQL-таблицей notebook.</p>
+						</div>
+						<span class="lab-tag">MySQL Web</span>
+					</div>
+					<div class="file-grid">
+						<a class="file-link" href="z10-1.htm" data-title="ЛР4 N1: выбор таблиц study"><b>z10-1.htm</b><span>Форма выбора</span></a>
+						<a class="file-link" href="z10-2.php?structure%5B%5D=sal&content%5B%5D=sal" data-title="ЛР4 N1: вывод sal"><b>z10-2.php</b><span>Структура и данные</span></a>
+						<a class="file-link" href="ex1.php" data-title="ЛР4 N2.1: создать notebook"><b>ex1.php</b><span>CREATE TABLE</span></a>
+						<a class="file-link" href="ex2.php" data-title="ЛР4 N2.2: форма notebook"><b>ex2.php</b><span>INSERT form</span></a>
+						<a class="file-link" href="ex3.php" data-title="ЛР4 N2.3: вывод notebook"><b>ex3.php</b><span>SELECT *</span></a>
+						<a class="file-link" href="ex4.php" data-title="ЛР4 N2.4: изменение notebook"><b>ex4.php</b><span>UPDATE form</span></a>
+						<a class="file-link" href="ex5.php" data-title="ЛР4 N2.5: три записи"><b>ex5.php</b><span>3 INSERT</span></a>
+					</div>
+				</article>
+			</section>
+
+			<div class="note">
+				Для полноценной демонстрации PHP-файлов нужен PHP в PATH или установленный XAMPP/OpenServer. MySQL должен быть запущен для лабораторной N 4.
+			</div>
+		</main>
+	</div>
+
+	<script>
+		const links = document.querySelectorAll(".file-link");
+		const preview = document.getElementById("preview");
+		const viewerTitle = document.getElementById("viewerTitle");
+		const viewerPath = document.getElementById("viewerPath");
+		const openCurrent = document.getElementById("openCurrent");
+		let currentHref = "z1-1.txt";
+
+		function selectLink(link) {
+			links.forEach((item) => item.classList.remove("is-selected"));
+			link.classList.add("is-selected");
+			currentHref = link.getAttribute("href");
+			preview.src = currentHref;
+			viewerTitle.textContent = link.dataset.title || link.textContent.trim();
+			viewerPath.textContent = currentHref;
+		}
+
+		links.forEach((link) => {
+			link.addEventListener("click", (event) => {
+				event.preventDefault();
+				selectLink(link);
+			});
+		});
+
+		openCurrent.addEventListener("click", () => {
+			window.open(currentHref, "_blank", "noopener");
+		});
+
+		const navLinks = document.querySelectorAll(".nav-link");
+		navLinks.forEach((link) => {
+			link.addEventListener("click", () => {
+				navLinks.forEach((item) => item.classList.remove("is-active"));
+				link.classList.add("is-active");
+			});
+		});
+	</script>
+</body>
+</html>

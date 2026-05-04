@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>Задание 1</title>
+</head>
+<body>
+	<h3>Выберите расположение текста</h3>
+	<form action="z4-1b.php" method="get">
+		<p><b>Горизонтальное расположение:</b></p>
+		<p><label><input type="radio" name="align" value="left" checked> left</label></p>
+		<p><label><input type="radio" name="align" value="center"> center</label></p>
+		<p><label><input type="radio" name="align" value="right"> right</label></p>
+
+		<p><b>Вертикальное расположение:</b></p>
+		<p><label><input type="checkbox" name="valign[]" value="top" checked> top</label></p>
+		<p><label><input type="checkbox" name="valign[]" value="middle"> middle</label></p>
+		<p><label><input type="checkbox" name="valign[]" value="bottom"> bottom</label></p>
+
+		<p><input type="submit" value="Выполнить"></p>
+	</form>
+</body>
+</html>
