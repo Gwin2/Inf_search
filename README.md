@@ -53,7 +53,15 @@ index.html
 | Сервис | Назначение | Порт |
 |---|---|---|
 | `app` | PHP 8.2 + Apache | `8080 -> 80` |
-| `db` | MySQL 8.0 | `3307 -> 3306` |
+| `db` | MySQL 8.0 | внутри Docker-сети |
+
+Для обоих сервисов включён режим:
+
+```yaml
+restart: always
+```
+
+После перезагрузки компьютера проект поднимется автоматически, когда запустится Docker Desktop.
 
 Файлы Docker:
 
@@ -81,15 +89,6 @@ setup-demo-db.php
 
 ```text
 host: db
-user: root
-password: пусто
-```
-
-Подключение с хоста:
-
-```text
-host: 127.0.0.1
-port: 3307
 user: root
 password: пусто
 ```
