@@ -13,3 +13,9 @@ http://localhost:8080/index.html
 
 Для выполнения PHP-файлов нужен PHP в PATH или установленный XAMPP/OpenServer.
 Для лабораторной N 4 также нужен запущенный MySQL.
+
+Docker Compose запуск:
+docker compose up -d --build
+
+Открыть:
+http://127.0.0.1:8080/index.html

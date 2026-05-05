@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Сдача лабораторных работ</title>
+	<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" rx="12" fill="%2317212d"/%3E%3Crect x="10" y="10" width="44" height="44" rx="8" fill="%23f5c55c"/%3E%3Ctext x="32" y="39" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="800" fill="%2317212d"%3E%D0%9B%D0%A0%3C/text%3E%3C/svg%3E'>
 	<style>
 		:root {
 			--bg: #f6f7fb;
@@ -491,7 +492,7 @@
 							<span id="viewerTitle">Лабораторная 1: ответы SQL</span>
 							<span id="viewerPath" class="viewer-path">z1-1.txt</span>
 						</div>
-						<button id="openCurrent" class="open-btn" type="button">Открыть отдельно</button>
+						<button id="openCurrent" class="open-btn" type="button">Открыть код</button>
 					</div>
 					<iframe id="preview" title="Предпросмотр лабораторной" src="z1-1.txt"></iframe>
 				</div>
@@ -512,7 +513,7 @@
 					</div>
 					<div class="summary-card">
 						<h3>Демонстрация</h3>
-						<p>Клик по файлу открывает его внутри панели. Кнопка рядом с предпросмотром выводит работу в отдельной вкладке.</p>
+						<p>Клик по файлу запускает его внутри панели. Кнопка рядом с предпросмотром показывает исходный код файла.</p>
 					</div>
 				</div>
 			</section>
@@ -604,11 +605,18 @@
 		const viewerPath = document.getElementById("viewerPath");
 		const openCurrent = document.getElementById("openCurrent");
 		let currentHref = "z1-1.txt";
+		let showingCode = false;
+
+		function getCodeHref(href) {
+			return href.split("?")[0];
+		}
 
 		function selectLink(link) {
 			links.forEach((item) => item.classList.remove("is-selected"));
 			link.classList.add("is-selected");
 			currentHref = link.getAttribute("href");
+			showingCode = false;
+			openCurrent.textContent = "Открыть код";
 			preview.src = currentHref;
 			viewerTitle.textContent = link.dataset.title || link.textContent.trim();
 			viewerPath.textContent = currentHref;
@@ -621,8 +629,18 @@
 			});
 		});
 
-		openCurrent.addEventListener("click", () => {
-			window.open(currentHref, "_blank", "noopener");
+		openCurrent.addEventListener("click", async () => {
+			if (showingCode) {
+				showingCode = false;
+				openCurrent.textContent = "Открыть код";
+				preview.src = currentHref;
+				return;
+			}
+
+			const codeHref = getCodeHref(currentHref);
+			preview.src = "code-viewer.php?file=" + encodeURIComponent(codeHref);
+			showingCode = true;
+			openCurrent.textContent = "Показать результат";
 		});
 
 		const navLinks = document.querySelectorAll(".nav-link");

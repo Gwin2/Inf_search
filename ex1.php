@@ -1,5 +1,5 @@
 <?php
-$conn = mysqli_connect("localhost", "root", "");
+$conn = mysqli_connect(getenv("DB_HOST") ?: "localhost", getenv("DB_USER") ?: "root", getenv("DB_PASS") ?: "");
 
 if (!$conn) {
 	die("Нет подключения к MySQL");

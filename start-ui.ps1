@@ -6,7 +6,8 @@ $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $Root
 
 $Port = 8080
-$Url = "http://localhost:$Port/index.html"
+$HostName = "127.0.0.1"
+$Url = "http://${HostName}:$Port/index.html"
 
 $PhpCandidates = @(
 	"php",
@@ -34,20 +35,35 @@ foreach ($Candidate in $PhpCandidates) {
 }
 
 if (-not $Php) {
-	Write-Host "PHP не найден." -ForegroundColor Red
-	Write-Host "Установи PHP или XAMPP/OpenServer, затем повтори команду:" -ForegroundColor Yellow
+	Write-Host "PHP not found." -ForegroundColor Red
+	Write-Host "Install PHP or XAMPP/OpenServer, then run:" -ForegroundColor Yellow
 	Write-Host ".\start-ui.bat" -ForegroundColor Yellow
 	Write-Host ""
-	Write-Host "Статический index.html можно открыть вручную, но PHP-лабораторные без PHP не выполнятся."
+	Write-Host "Static index.html can be opened manually, but PHP labs need PHP."
 	exit 1
+}
+
+$MysqlServer = "C:\xampp\mysql\bin\mysqld.exe"
+$MysqlConfig = "C:\xampp\mysql\bin\my.ini"
+
+if ((Test-Path $MysqlServer) -and -not (Get-Process mysqld -ErrorAction SilentlyContinue)) {
+	Write-Host "Starting MySQL..." -ForegroundColor Green
+	Start-Process -FilePath $MysqlServer -ArgumentList "--defaults-file=$MysqlConfig" -WindowStyle Hidden
+	Start-Sleep -Seconds 5
+}
+
+if (Test-Path "$Root\setup-demo-db.php") {
+	Write-Host "Preparing study and sample databases..." -ForegroundColor Green
+	& $Php "$Root\setup-demo-db.php"
 }
 
 $PortBusy = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
 if ($PortBusy) {
 	$Port = 8081
-	$Url = "http://localhost:$Port/index.html"
+	$Url = "http://${HostName}:$Port/index.html"
 }
 
-Write-Host "Запуск WebUI: $Url" -ForegroundColor Green
+Write-Host "Starting WebUI: $Url" -ForegroundColor Green
 Start-Process $Url
-& $Php -S "localhost:$Port" -t $Root
+Start-Process -FilePath $Php -ArgumentList @("-S", "$HostName`:$Port", "-t", $Root, "$Root\router.php") -WorkingDirectory $Root -WindowStyle Hidden
+Write-Host "Done. Server runs in background." -ForegroundColor Green
