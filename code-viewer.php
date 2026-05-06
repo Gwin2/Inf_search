@@ -3,7 +3,6 @@ $requested = $_GET["file"] ?? "";
 $root = realpath(__DIR__);
 $file = realpath(__DIR__ . DIRECTORY_SEPARATOR . str_replace(["/", "\\"], DIRECTORY_SEPARATOR, $requested));
 $allowed = ["php", "inc", "htm", "html", "txt", "ps1", "bat"];
-$canPreview = false;
 
 if (!$requested || !$file || !str_starts_with($file, $root) || !is_file($file)) {
 	http_response_code(404);
@@ -18,7 +17,6 @@ if (!$requested || !$file || !str_starts_with($file, $root) || !is_file($file)) 
 	} else {
 		$title = $requested;
 		$code = file_get_contents($file);
-		$canPreview = in_array($ext, ["php", "htm", "html", "txt"]);
 	}
 }
 ?>
@@ -78,18 +76,12 @@ if (!$requested || !$file || !str_starts_with($file, $root) || !is_file($file)) 
 
 		.workspace {
 			height: calc(100vh - 45px);
-			display: grid;
-			grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr);
-		}
-
-		.editor,
-		.result {
-			min-width: 0;
-			height: 100%;
+			display: block;
 		}
 
 		.editor {
-			border-right: 1px solid #d7e0e8;
+			height: 100%;
+			min-width: 0;
 		}
 
 		textarea {
@@ -107,30 +99,6 @@ if (!$requested || !$file || !str_starts_with($file, $root) || !is_file($file)) 
 			tab-size: 4;
 		}
 
-		iframe {
-			width: 100%;
-			height: 100%;
-			border: 0;
-			background: #ffffff;
-		}
-
-		.placeholder {
-			margin: 0;
-			padding: 16px;
-			color: #5d6b7a;
-		}
-
-		@media (max-width: 900px) {
-			.workspace {
-				grid-template-columns: 1fr;
-				grid-template-rows: 1fr 1fr;
-			}
-
-			.editor {
-				border-right: 0;
-				border-bottom: 1px solid #d7e0e8;
-			}
-		}
 	</style>
 </head>
 <body>
@@ -145,20 +113,12 @@ if (!$requested || !$file || !str_starts_with($file, $root) || !is_file($file)) 
 		<div class="editor">
 			<textarea id="code" spellcheck="false"><?php echo htmlspecialchars($code); ?></textarea>
 		</div>
-		<div class="result">
-<?php if ($canPreview) { ?>
-			<iframe id="result" src="<?php echo htmlspecialchars($requested); ?>"></iframe>
-<?php } else { ?>
-			<p class="placeholder">Для этого типа файла доступно редактирование без предпросмотра.</p>
-<?php } ?>
-		</div>
 	</div>
 	<script>
 		const file = <?php echo json_encode($requested); ?>;
 		const code = document.getElementById("code");
 		const status = document.getElementById("status");
 		const save = document.getElementById("save");
-		const result = document.getElementById("result");
 		let timer = null;
 		let saving = false;
 
@@ -176,10 +136,6 @@ if (!$requested || !$file || !str_starts_with($file, $root) || !is_file($file)) 
 				const data = await response.json();
 				if (!data.ok) throw new Error(data.error || "save failed");
 				status.textContent = "сохранено";
-				if (result) {
-					const glue = file.includes("?") ? "&" : "?";
-					result.src = file + glue + "_live=" + Date.now();
-				}
 			} catch (error) {
 				status.textContent = "ошибка сохранения";
 			} finally {
